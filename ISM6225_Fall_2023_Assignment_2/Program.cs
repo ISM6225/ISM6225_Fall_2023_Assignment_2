@@ -112,8 +112,38 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                IList<IList<int>> result = new List<IList<int>>();
+                int len = nums.Length;
+
+                if (len == 0)
+                {
+                    // If there are no elements in the 'nums' array,
+                    // add a single range from 'lower' to 'upper' to the 'result'.
+                    result.Add(new List<int> { lower, upper });
+                    return result;
+                }
+
+                if (nums[0] - lower > 0)
+                    // If the first element of 'nums' is greater than 'lower',
+                    // add a range from 'lower' to 'nums[0] - 1' to the 'result'.
+                    result.Add(new List<int> { lower, nums[0] - 1 });
+
+                int i;
+                for (i = 1; i < len; i++)
+                {
+                    if (nums[i] - nums[i - 1] > 1)
+                        // If there's a gap between 'nums[i-1]' and 'nums[i]',
+                        // add a range from 'nums[i-1] + 1' to 'nums[i] - 1' to the 'result'.
+                        result.Add(new List<int> { nums[i - 1] + 1, nums[i] - 1 });
+                }
+
+                if (upper - nums[i - 1] > 0)
+                    // If there's a gap between the last element of 'nums' and 'upper',
+                    // add a range from 'nums[i-1] + 1' to 'upper' to the 'result'.
+                    result.Add(new List<int> { nums[i - 1] + 1, upper });
+
+                return result;
+
             }
             catch (Exception)
             {
@@ -156,8 +186,56 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return s.Length == 0;
+                if (s.Length <= 1)
+                    return false;
+
+                var bracketQueue = new List<int>();
+                for (var i = 0; i < s.Length; i++)
+                {
+                    if (s[i] == '(')
+                    {
+                        // If an opening parenthesis is encountered, add '1' to the bracketQueue.
+                        bracketQueue.Add(1);
+                        continue;
+                    }
+                    if (s[i] == '[')
+                    {
+                        // If an opening square bracket is encountered, add '2' to the bracketQueue.
+                        bracketQueue.Add(2);
+                        continue;
+                    }
+                    if (s[i] == '{')
+                    {
+                        // If an opening curly brace is encountered, add '3' to the bracketQueue.
+                        bracketQueue.Add(3);
+                        continue;
+                    }
+                    if (bracketQueue.Count == 0)
+                        // If there's no opening bracket to match the current closing bracket, return false.
+                        return false;
+                    if (s[i] == ')' && bracketQueue[bracketQueue.Count - 1] == 1)
+                    {
+                        // If a closing parenthesis matches the last opened parenthesis, remove it from bracketQueue.
+                        bracketQueue.RemoveAt(bracketQueue.Count - 1);
+                        continue;
+                    }
+                    if (s[i] == ']' && bracketQueue[bracketQueue.Count - 1] == 2)
+                    {
+                        // If a closing square bracket matches the last opened square bracket, remove it from bracketQueue.
+                        bracketQueue.RemoveAt(bracketQueue.Count - 1);
+                        continue;
+                    }
+                    if (s[i] == '}' && bracketQueue[bracketQueue.Count - 1] == 3)
+                    {
+                        // If a closing curly brace matches the last opened curly brace, remove it from bracketQueue.
+                        bracketQueue.RemoveAt(bracketQueue.Count - 1);
+                        continue;
+                    }
+                    // If none of the above conditions are met, return false.
+                    return false;
+                }
+                // If all brackets are properly matched, the bracketQueue should be empty.
+                return bracketQueue.Count == 0;
             }
             catch (Exception)
             {
@@ -191,8 +269,26 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 1;
+                int buy = 0, sell = 0, profit = 0;
+
+                while (sell < prices.Length)
+                {
+                    // Calculate the profit by finding the maximum difference between the selling price
+                    // at the current index and the buying price at the 'buy' index.
+                    profit = Math.Max(prices[sell] - prices[buy], profit);
+
+                    if (prices[sell] < prices[buy])
+                    {
+                        // If the current selling price is lower than the buying price,
+                        // update the 'buy' index to the current 'sell' index to potentially
+                        // find a better buying opportunity.
+                        buy = sell;
+                    }
+                    sell++;
+                }
+
+                return profit;
+
             }
             catch (Exception)
             {
@@ -229,8 +325,19 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return false;
+                var d = new Dictionary<char, char> { { '6', '9' }, { '9', '6' }, { '8', '8' }, { '1', '1' }, { '0', '0' } };
+
+                for (int i = 0; i <= s.Length / 2; i++)
+                {
+                    // Check if the character at index 'i' is in the dictionary 'd',
+                    // and if its corresponding character at the opposite index is the same.
+                    if (!d.ContainsKey(s[i]) || d[s[i]] != s[^(i + 1)])
+                        return false;
+                }
+
+                // If all characters are valid and symmetrically matched, return true.
+                return true;
+
             }
             catch (Exception)
             {
@@ -271,8 +378,18 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                Dictionary<int, int> id = new(); // Initialize a dictionary to track the count of each number.
+                int ans = 0;
+
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    int c = id.GetValueOrDefault(nums[i], 0); // Get the count of the current number, default to 0 if not found.
+                    ans += c; // Add the current count to the running sum 'ans'.
+                    id[nums[i]] = c + 1; // Increment the count of the current number in the dictionary.
+                }
+
+                return ans; // Return the total count of pairs that meet the specified condition.
+
             }
             catch (Exception)
             {
@@ -321,8 +438,18 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                List<int> list = nums.Distinct().ToList(); // Remove duplicates from 'nums' and convert it to a list.
+                list.Sort(); // Sort the list in ascending order.
+
+                if (list.Count < 3)
+                {
+                    // If there are fewer than three unique elements, return the largest element.
+                    return list[list.Count - 1];
+                }
+
+                // Otherwise, return the third-largest element in the sorted list.
+                return list[list.Count - 3];
+
             }
             catch (Exception)
             {
@@ -354,8 +481,22 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<string>() { };
+                var list = new List<string>(); // Initialize a list to store the transformed strings.
+                var arr = currentState.ToCharArray(); // Convert the input 'currentState' into a character array.
+
+                for (int i = 0; i < currentState.Length - 1; i++)
+                {
+                    // Check for consecutive '+' symbols and replace them with '-' to create a new state.
+                    if (arr[i] == arr[i + 1] && arr[i] == '+')
+                    {
+                        arr[i] = arr[i + 1] = '-'; // Transform the characters.
+                        list.Add(new string(arr)); // Add the modified state to the list.
+                        arr[i] = arr[i + 1] = '+'; // Restore the original state for the next iteration.
+                    }
+                }
+
+                return list; // Return the list of transformed states.
+
             }
             catch (Exception)
             {
@@ -383,8 +524,21 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         public static string RemoveVowels(string s)
         {
-            // Write your code here and you can modify the return value according to the requirements
-            return "";
+            var set = new HashSet<char>() { 'a', 'e', 'i', 'o', 'u' }; // Initialize a set of vowels.
+            var sb = new StringBuilder();
+
+            foreach (var c in s)
+            {
+                // Iterate through each character in the string 's'.
+                if (!set.Contains(c))
+                {
+                    // If the character is not in the set of vowels, append it to the StringBuilder.
+                    sb.Append(c);
+                }
+            }
+
+            return sb.ToString(); // Return the result as a string with vowels removed.
+
         }
 
         /* Inbuilt Functions - Don't Change the below functions */
